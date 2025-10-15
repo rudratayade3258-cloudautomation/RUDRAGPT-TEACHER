@@ -13,6 +13,216 @@ INSTRUCTIONS:
 -->
 
 <!-- ==================== index.html ==================== -->
+<!-- save as animated-particles-theme.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Particles + Theme Toggle</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --surface: rgba(255,255,255,0.04);
+      --text:#e6eef8;
+      --accent:#7dd3fc;
+    }
+    [data-theme="light"]{
+      --bg:#f7fafc;
+      --surface: rgba(2,6,23,0.06);
+      --text:#0b1220;
+      --accent:#2563eb;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}
+    body{background:var(--bg); color:var(--text); min-height:100vh; overflow:hidden}
+
+    /* Canvas covers whole screen */
+    #particle-canvas{
+      position:fixed; inset:0; z-index:-1; display:block;
+    }
+
+    .header {
+      padding: 28px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      position:relative;
+    }
+    .brand { font-weight:700; font-size:1.15rem; letter-spacing:-0.02em; }
+    .controls { display:flex; gap:10px; align-items:center; }
+
+    .toggle-btn {
+      padding:8px 12px; border-radius:999px; background:var(--surface);
+      border:1px solid rgba(255,255,255,0.06); cursor:pointer; color:var(--text);
+      transition: transform .15s ease;
+    }
+    .toggle-btn:active { transform: translateY(2px); }
+
+    main { padding: 24px; display:flex; align-items:center; justify-content:center; min-height: calc(100vh - 80px); }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      padding:22px; border-radius:12px; max-width:900px; width:92%;
+      box-shadow: 0 10px 40px rgba(2,6,23,0.5); border:1px solid rgba(255,255,255,0.04);
+    }
+    h1 { font-size: clamp(1.25rem, 3.2vw, 2.4rem); margin-bottom:8px; }
+    p { opacity:.9; line-height:1.5; }
+
+    .small { font-size:0.95rem; opacity:.85; }
+    footer { position:fixed; left:12px; bottom:12px; font-size:0.85rem; color:var(--text); opacity:0.6; }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <header class="header">
+    <div class="brand">RUDRA • <span style="font-weight:500; opacity:.85">Teacher Site</span></div>
+    <div class="controls">
+      <button class="toggle-btn" id="toggleTheme">Toggle Theme</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h1>Interactive Particles Background</h1>
+      <p class="small">Ye canvas-based particle background hai jo mouse movement follow karta hai. Neeche diye gae script ko page ke footer me add karo agar tum alag file me rakhna chahte ho.</p>
+
+      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="toggle-btn" onclick="spawnBurst()">Spawn Burst</button>
+        <button class="toggle-btn" onclick="toggleMotion()">Toggle Motion</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>Tip: Copy & paste this whole file into your project. Works offline.</footer>
+
+  <script>
+  /* Particle system (lightweight, no library) */
+  (() => {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let DPR = Math.max(1, window.devicePixelRatio || 1);
+    let w=0,h=0;
+    const particles = [];
+    const maxParticles = 180;
+    let motion = true;
+
+    function resize(){
+      DPR = Math.max(1, window.devicePixelRatio || 1);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = Math.floor(w * DPR);
+      canvas.height = Math.floor(h * DPR);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function createParticle(x,y,dx,dy,life,size,color){
+      return {x,y,dx,dy,life,age:0,size,color};
+    }
+
+    function spawn(x,y,amt=8){
+      for(let i=0;i<amt;i++){
+        if(particles.length>maxParticles) break;
+        const angle = Math.random()*Math.PI*2;
+        const speed = rand(0.2,2.2);
+        const dx = Math.cos(angle)*speed;
+        const dy = Math.sin(angle)*speed;
+        const life = rand(2.2,5.5);
+        const size = rand(0.8,3.5);
+        const hue = Math.floor(rand(180,220));
+        const color = `hsla(${hue},90%,65%,`;
+        particles.push(createParticle(x + rand(-6,6), y + rand(-6,6), dx, dy, life, size, color));
+      }
+    }
+
+    // initial soft spawn
+    for(let i=0;i<40;i++){
+      spawn(rand(0,w), rand(0,h), 1);
+    }
+
+    let last = performance.now();
+    function step(now){
+      const dt = Math.min(0.04, (now - last)/1000);
+      last = now;
+      // clear (semi-transparent for trailing)
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0,0,w,h);
+
+      // update + draw
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        if(motion){
+          // slight attraction to center + noise
+          const cx = w*0.5, cy = h*0.5;
+          const ax = (cx - p.x) * 0.0006;
+          const ay = (cy - p.y) * 0.0006;
+          p.dx += ax * dt*60;
+          p.dy += ay * dt*60;
+        } else {
+          p.dx *= 0.995;
+          p.dy *= 0.995;
+        }
+        p.x += p.dx;
+        p.y += p.dy;
+        p.age += dt;
+
+        const t = p.age / p.life;
+        if(t >= 1) { particles.splice(i,1); continue; }
+
+        // fading alpha
+        const alpha = Math.max(0, 1 - t);
+        const size = p.size * (1 + 0.6 * (1 - t));
+        ctx.beginPath();
+        const col = p.color + (alpha*0.9) + ')';
+        ctx.fillStyle = col;
+        ctx.arc(p.x, p.y, size, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // occasionally spawn tiny ambient particles
+      if(Math.random() < 0.4 && particles.length < maxParticles){
+        const px = Math.random()*w;
+        const py = Math.random()*h;
+        spawn(px, py, 1);
+      }
+
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    // mouse interactivity
+    window.addEventListener('mousemove', (e) => {
+      spawn(e.clientX, e.clientY, 4);
+    });
+    window.addEventListener('click', (e) => { spawn(e.clientX, e.clientY, 18); });
+
+    // exposed controls
+    window.spawnBurst = () => spawn(w/2, h/2, 60);
+    window.toggleMotion = () => { motion = !motion; alert('Motion: ' + (motion ? 'ON' : 'OFF')); };
+
+    // theme toggle
+    const toggleBtn = document.getElementById('toggleTheme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = localStorage.getItem('site-theme') || (prefersDark ? 'dark' : 'dark');
+    document.documentElement.setAttribute('data-theme', initial === 'light' ? 'light' : 'dark');
+
+    toggleBtn.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('site-theme', next);
+    });
+  })();
+  </script>
+</body>
+</html>
+
 <!doctype html>
 <html lang="en">
 <head>
