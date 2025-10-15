@@ -1,0 +1,73 @@
+// --- SPA Navigation ---
+const views = {
+  chat: document.getElementById('view-chat'),
+  quiz: document.getElementById('view-quiz'),
+  questions: document.getElementById('view-questions'),
+  papers: document.getElementById('view-papers')
+};
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.id.replace('nav-','');
+    document.getElementById('page-title').innerText = id==='chat'?'AI Tutor':id==='quiz'?'Quick Quiz':id==='questions'?'Random Question':'Prev Year Qs';
+    Object.values(views).forEach(v=>v.classList.add('hidden'));
+    views[id].classList.remove('hidden');
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// --- Chat Logic ---
+const messagesEl = document.getElementById('messages');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+const topicSelect = document.getElementById('topic-select');
+
+chatForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const val = chatInput.value.trim();
+  if(!val) return;
+  appendMessage('user', val);
+  chatInput.value='';
+  setTimeout(()=>appendMessage('bot', generateAIResponse(val, topicSelect.value)), 600);
+});
+
+function appendMessage(sender, text){
+  const div = document.createElement('div');
+  div.classList.add('msg', sender);
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function generateAIResponse(text, topic){
+  text = text.toLowerCase();
+  if(text.includes("physics")) return "Physics is fun! Try solving a NEET/JEE question now.";
+  if(text.includes("chemistry")) return "Chemistry involves reactions. Let's pick a sample question!";
+  if(text.includes("math")) return "Math sharpens your mind. Integrals and derivatives are key.";
+  if(text.includes("biology")) return "Biology is life! Understand diagrams and processes carefully.";
+  return "Keep practicing and asking questions! 🚀";
+}
+
+// --- Random Question Generator ---
+let questions = [];
+fetch('questions.json').then(r=>r.json()).then(data=>questions=data);
+
+const questionText = document.getElementById('question');
+const newQuestionBtn = document.getElementById('newQuestion');
+newQuestionBtn.addEventListener('click', ()=>{
+  if(questions.length===0){questionText.textContent="Loading..."; return;}
+  const q = questions[Math.floor(Math.random()*questions.length)];
+  questionText.textContent = q.question;
+});
+
+// --- Quiz (Simple MCQ demo) ---
+const quizArea = document.getElementById('quiz-area');
+document.getElementById('gen-quiz').addEventListener('click', ()=>{
+  quizArea.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const div = document.createElement('div');
+    div.textContent = `Sample MCQ ${i}: Topic question? (A) ... (B) ... (C) ... (D) ...`;
+    quizArea.appendChild(div);
+  }
+});

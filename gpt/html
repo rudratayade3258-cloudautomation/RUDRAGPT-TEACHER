@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUDRAGPT TEACHER</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">RUDRAGPT TEACHER</div>
+    <nav>
+      <button id="nav-chat" class="nav-btn active">AI Tutor</button>
+      <button id="nav-quiz" class="nav-btn">Quick Quiz</button>
+      <button id="nav-questions" class="nav-btn">Random Question</button>
+      <button id="nav-papers" class="nav-btn">Prev Year Qs</button>
+    </nav>
+    <div class="credits">Free GitHub Pages Version • Browser AI</div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <h1 id="page-title">AI Tutor</h1>
+    </header>
+
+    <!-- AI Tutor Chat -->
+    <section id="view-chat" class="view">
+      <div class="chat-panel">
+        <div id="messages" class="messages"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" placeholder="Ask NEET/JEE topics..." autocomplete="off" />
+          <select id="topic-select">
+            <option value="general">General</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="math">Math</option>
+            <option value="biology">Biology</option>
+          </select>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Quiz -->
+    <section id="view-quiz" class="view hidden">
+      <div class="panel-card large">
+        <h2>Quick Quiz</h2>
+        <div class="quiz-controls">
+          <select id="quiz-subject">
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="math">Math</option>
+            <option value="biology">Biology</option>
+          </select>
+          <button id="gen-quiz">Generate 5 MCQs</button>
+        </div>
+        <div id="quiz-area"></div>
+      </div>
+    </section>
+
+    <!-- Random Question -->
+    <section id="view-questions" class="view hidden">
+      <div class="panel-card large">
+        <h2>Random Question</h2>
+        <p id="question">Click below to get a question!</p>
+        <button id="newQuestion">🎯 Get Question</button>
+      </div>
+    </section>
+
+    <!-- Previous Year Papers -->
+    <section id="view-papers" class="view hidden">
+      <div class="panel-card large">
+        <h2>Previous Year Questions</h2>
+        <div id="papers-list">
+          <article class="paper">
+            <h4>Physics — Projectile motion (JEE)</h4>
+            <p>Question: A projectile is fired at ...</p>
+          </article>
+          <article class="paper">
+            <h4>Chemistry — Organic (NEET)</h4>
+            <p>Question: Identify the major product of ...</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
