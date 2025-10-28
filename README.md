@@ -14,6 +14,81 @@ INSTRUCTIONS:
 
 <!-- ==================== index.html ==================== -->
 <!-- save as animated-particles-theme.html -->
+from flask import Flask, render_template, request, jsonify
+import requests
+
+app = Flask(__name__)
+
+# Free AI model endpoint (Hugging Face)
+API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small"
+headers = {"Authorization": "Bearer hf_your_token_here"}  # apna Hugging Face token yahan daalna
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    data = request.get_json()
+    user_input = data.get("message")
+
+    payload = {"inputs": user_input}
+    response = requests.post(API_URL, headers=headers, json=payload)
+    result = response.json()
+
+    # Extract model reply
+    try:
+        bot_reply = result[0]["generated_text"]
+    except:
+        bot_reply = "Sorry, I couldn’t generate a reply."
+
+    return jsonify({"reply": bot_reply})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RUDRAGPT Teacher Chat</title>
+  <style>
+    body { font-family: Arial; background: #0f1724; color: white; text-align:center; }
+    #chatbox { width: 60%; margin: 40px auto; background: #1e293b; padding: 20px; border-radius: 12px; }
+    input { width: 80%; padding: 10px; border-radius: 8px; border: none; }
+    button { padding: 10px 20px; background: #38bdf8; border: none; border-radius: 8px; color: white; cursor: pointer; }
+    .msg { text-align: left; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>💬 RUDRAGPT Teacher AI Chat</h1>
+  <div id="chatbox">
+    <div id="messages"></div>
+    <input id="userInput" placeholder="Ask something...">
+    <button onclick="send()">Send</button>
+  </div>
+
+  <script>
+    async function send() {
+      const msg = document.getElementById("userInput").value;
+      if (!msg) return;
+      const messages = document.getElementById("messages");
+      messages.innerHTML += `<div class='msg'><b>You:</b> ${msg}</div>`;
+      document.getElementById("userInput").value = "";
+
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      messages.innerHTML += `<div class='msg'><b>AI:</b> ${data.reply}</div>`;
+    }
+  </script>
+</body>
+</html>
+pip install flask requests
+python app.py
+
 <!doctype html>
 <html lang="en">
 <head>
