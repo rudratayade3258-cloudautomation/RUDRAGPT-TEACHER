@@ -18,6 +18,217 @@ INSTRUCTIONS:
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RUDRAGPT - Teacher</title>
+  <meta name="description" content="RUDRAGPT Teacher — lightweight AI assistant & resources for teachers and students." />
+  <meta name="author" content="Rudra Tayde" />
+  <style>
+    :root{
+      --bg:#0f1724; /* dark navy */
+      --card:#0b1220;
+      --muted:#9aa4b2;
+      --accent:#6ee7b7;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:#e6eef6;background:linear-gradient(180deg,var(--bg),#071021);-webkit-font-smoothing:antialiased}
+    .container{max-width:1100px;margin:0 auto;padding:28px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .logo{display:flex;gap:12px;align-items:center}
+    .logo .mark{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#052024}
+    nav{display:flex;gap:12px;align-items:center}
+    nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}
+    nav a.btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#dff7ee}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;padding:36px 0}
+    .card{background:linear-gradient(180deg,var(--card),#071422);border-radius:var(--radius);padding:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    h1{font-size:28px;margin:0 0 10px}
+    p.lead{color:var(--muted);margin:0 0 18px}
+    .cta{display:flex;gap:12px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#60a5fa);border:none;padding:12px 16px;border-radius:12px;color:#052024;font-weight:600;cursor:pointer}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .feature{background:var(--glass);padding:14px;border-radius:12px}
+    /* Right column: tools */
+    .tools{display:flex;flex-direction:column;gap:12px}
+    .tool{background:var(--glass-2);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .tool h4{margin:0 0 6px}
+    .small{font-size:13px;color:var(--muted)}
+    /* footer */
+    footer{padding:28px 0;color:var(--muted);font-size:13px}
+    /* responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .features{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:600px){
+      nav{display:none}
+      header{padding:6px 0}
+      .features{grid-template-columns:1fr}
+      .logo .text{display:none}
+    }
+    /* form */
+    input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef6}
+    label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
+    .muted{color:var(--muted)}
+    .row{display:flex;gap:12px}
+    .row > *{flex:1}
+    .footer-grid{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .pulse{animation:pulse 3s infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="mark">RT</div>
+        <div class="text">
+          <div style="font-weight:700">RUDRAGPT</div>
+          <div style="font-size:12px;color:var(--muted)">Teacher — AI classroom assistant</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#tools">Tools</a>
+        <a href="#contact" class="btn">Contact</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <section class="card">
+        <h1>Teacher's assistant made simple — RUDRAGPT</h1>
+        <p class="lead">Create lesson plans, generate quizzes, summarize notes, and answer students — all from a single dashboard. Built lightweight for classrooms and teachers.</p>
+        <div class="cta">
+          <button class="btn-primary" onclick="startDemo()">Start Demo</button>
+          <button class="btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact Us</button>
+        </div>
+
+        <div id="features" class="features" style="margin-top:18px">
+          <div class="feature">
+            <strong>Lesson Plans</strong>
+            <div class="small">Auto-generate step-by-step lesson outlines for any topic and grade.</div>
+          </div>
+          <div class="feature">
+            <strong>Quiz Generator</strong>
+            <div class="small">Multiple choice, short answer, and printable worksheets.</div>
+          </div>
+          <div class="feature">
+            <strong>Student Help</strong>
+            <div class="small">Explain concepts in simple language or advanced detail on demand.</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="tools">
+        <div class="tool card">
+          <h4>Live Chat (placeholder)</h4>
+          <div class="small">Integrate your GPT model or backend here. Example: send teacher question & return an answer.</div>
+          <div style="margin-top:10px">
+            <input id="chatInput" placeholder="Type a student question like: 'Explain photosynthesis for class 8'" />
+            <button class="btn-primary" style="margin-top:8px" onclick="askDemo()">Ask</button>
+          </div>
+          <div id="chatOutput" style="margin-top:12px;color:var(--muted);font-size:14px">Answers will appear here (demo mode).</div>
+        </div>
+
+        <div class="tool card">
+          <h4>Quick Tools</h4>
+          <div class="small">Export lessons, print quizzes, and download CSV of student scores.</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn">Export</button>
+            <button class="btn">Print</button>
+            <button class="btn">Download CSV</button>
+          </div>
+        </div>
+
+        <div class="tool card pulse">
+          <h4>Tips</h4>
+          <ul style="margin:8px 0 0 16px;color:var(--muted)">
+            <li>Use short prompts for best results.</li>
+            <li>Save lesson templates for reuse.</li>
+            <li>Always review auto-generated assessments.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <section id="contact" style="margin-top:26px" class="card">
+      <h3>Contact / Get Started</h3>
+      <p class="muted">Fill the form to request access or integration help. (Demo mode — no data stored.)</p>
+      <form id="contactForm" onsubmit="submitForm(event)">
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" type="email" required />
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <label for="message">Message</label>
+          <textarea id="message" rows="4" placeholder="How can we help? e.g. integrate GPT, add class roster…"></textarea>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button type="submit" class="btn">Send</button>
+          <button type="button" class="btn" onclick="fillExample()">Fill Example</button>
+        </div>
+        <div id="formMsg" style="margin-top:10px;color:var(--muted)"></div>
+      </form>
+    </section>
+
+    <footer style="margin-top:26px">
+      <div class="footer-grid">
+        <div>© <strong>RUDRAGPT</strong> — Built by Rudra Tayde</div>
+        <div style="text-align:right">GitHub: <a href="https://github.com/rudratayade3258-cloudautomation/RUDRAGPT-TEACHER" target="_blank" style="color:var(--muted)">repo</a></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Demo behaviours only — replace these with real backend calls
+    function startDemo(){
+      alert('Demo started — this is a local placeholder. To connect a GPT backend, send the prompt to your server endpoint and return results to #chatOutput.');
+    }
+    function askDemo(){
+      const v = document.getElementById('chatInput').value.trim();
+      const out = document.getElementById('chatOutput');
+      if(!v){out.textContent='Type a question first.';return}
+      out.textContent = 'Generating answer...';
+      // Simple mock: echo with a small transformation
+      setTimeout(()=>{
+        out.textContent = 'Demo answer for: "'+v+'"\n\n1) Start with a short intro.\n2) Explain key points.\n3) Give 2 practice questions.'
+      },700)
+    }
+
+    function submitForm(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      const formMsg = document.getElementById('formMsg');
+      if(!name || !email){formMsg.textContent='Please fill required fields.';return}
+      // Demo behaviour: don't send anywhere
+      formMsg.textContent = 'Thanks '+name+" — we received your request (demo). We'll contact you at " + email + '.';
+      document.getElementById('contactForm').reset();
+    }
+    function fillExample(){
+      document.getElementById('name').value = 'Rudra Example';
+      document.getElementById('email').value = 'rudra@example.com';
+      document.getElementById('message').value = 'Please integrate GPT for quiz generation and class roster import.';
+    }
+
+    // Small enhancement: show mobile nav as simple toggle (for future expansion)
+    // (In this single-file template we left nav hidden on small screens; you can add a burger icon and toggle.)
+  </script>
+</body>
+</html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Particles + Theme Toggle</title>
   <style>
